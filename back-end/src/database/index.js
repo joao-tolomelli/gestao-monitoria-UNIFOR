@@ -1,11 +1,14 @@
 const { Pool } = require("pg");
+
+const dotenv = require('dotenv').config()
 const fs = require('fs');
 const path = require('path');
 
+const dbURL = process.env.DB_URL
 const sslPath = path.join(__dirname, '..', 'ssl', 'ca.crt');
 
 const pool = new Pool({
-  connectionString: "postgresql://postgres:2X2USR761GAhsC76@subjectively-valued-schnauzer.data-1.use1.tembo.io:5432/postgres",
+  connectionString: dbURL,
   ssl: {
 		ca: fs.readFileSync(sslPath).toString(),
 	}
