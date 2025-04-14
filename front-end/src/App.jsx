@@ -1,6 +1,6 @@
 import Header from "./components/Header";
 import Button from "./components/Button";
-
+import InputBox from "./components/InputBox";
 
 function App() {
   return (
@@ -27,7 +27,35 @@ function App() {
             </div>
           </div>
           <div className="col-span-2 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <h1 className="text-xl font-bold">Registrar atendimento</h1>
+            <div className="flex flex-col h-full w-full">
+              <h1 className="text-xl font-bold mb-4">Registrar atendimento</h1>
+              <div className="grid grid-cols-12 gap-6">
+                <div className="col-span-4">
+                  <InputBox label="Data" type="date"></InputBox>
+                </div>
+                <div className="col-span-8">
+                  <InputBox label="Categoria" type="text"></InputBox>
+                </div>
+                <div className="col-span-5">
+                  <div className="flex flex-row items-end">
+                    <InputBox
+                      label="Alunos atendidos (matricula)"
+                      type="text"
+                    ></InputBox>
+                    <div className="flex  w-full h-full ml-2 mb-[.4rem]">
+                      <button className="flex justify-center items-center bg-blue-800 h-[1.5rem] w-[1.5rem] rounded-2xl transition duration-300 transform hover:bg-blue-700 hover:scale-105 cursor-pointer">
+                        <i className="pi pi-plus text-white text-sm" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="h-full w-full flex justify-center items-end">
+                <div>
+                  <Button text="Registrar"></Button>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="col-span-1 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
             <h1 className="text-xl font-bold">Configurações</h1>
