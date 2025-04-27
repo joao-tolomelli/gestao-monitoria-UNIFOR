@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Button from "../../components/Button";
-import GraphCandle from "../../components/GraphCandle";
 import Header from "../../components/Header";
 import InputBox from "../../components/InputBox";
+import Graph from "../../components/Graph";
 
 function HomeHandler() {
   const [data, setData] = useState({
@@ -13,9 +13,9 @@ function HomeHandler() {
       Tuesday: "4",
       Wednesday: "1",
       Thursday: "0",
-      Friday: "5",
+      Friday: "6",
     },
-    Today: "Friday"
+    today: "Monday",
   });
 
   return (
@@ -31,13 +31,16 @@ function HomeHandler() {
             </div>
           </div>
           <div className="col-span-2 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <h1 className="text-xl font-bold">Atendimentos</h1>
-            <div className="grid grid-cols-8  h-full">
-              <div className="col-span-5 flex flex-row justify-center items-center">
-                <GraphCandle></GraphCandle>
-              </div>
-              <div className="col-span-3 flex justify-center items-center">
-                <span>Tempo</span>
+            <div className="flex flex-col h-full">
+              <h1 className="text-xl font-bold">Atendimentos</h1>
+              <div className="grid grid-cols-8 h-full">
+                <Graph
+                  workingHours={data.workingHours}
+                  today={data.today}
+                ></Graph>
+                <div className="col-span-3 flex justify-center items-center">
+                  <span>Tempo</span>
+                </div>
               </div>
             </div>
           </div>
