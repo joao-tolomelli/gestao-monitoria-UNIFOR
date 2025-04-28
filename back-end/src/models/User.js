@@ -3,11 +3,11 @@ const { query } = require("../database");
 class User {
   constructor(userRow) {
     this.id = userRow.id;
-    this.nome = userRow.nome;
+    this.name = userRow.name;
     this.matricula = userRow.matricula;
     this.senha = userRow.senha;
     this.tipo = userRow.tipo;
-    this.foto_url = userRow.foto_url; // ✅ adicionamos o campo
+    this.photo = userRow.photo;
     this.created_at = userRow.created_at;
   }
 
@@ -16,12 +16,12 @@ class User {
     return result.rows.map((row) => new User(row));
   }
 
-  static async create({ nome, matricula, senha, tipo, foto_url }) {
+  static async create({ name, matricula, senha, tipo, photo }) {
     const result = await query(
-      `INSERT INTO usuarios (nome, matricula, senha, tipo, foto_url)
+      `INSERT INTO usuarios (name, matricula, senha, tipo, photo)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [nome, matricula, senha, tipo, foto_url]
+      [name, matricula, senha, tipo, photo]
     );
     return new User(result.rows[0]);
   }
@@ -47,14 +47,14 @@ class User {
 
     await query(
       `UPDATE usuarios SET
-        nome = $1,
+        name = $1,
         matricula = $2,
         senha = $3,
         tipo = $4,
-        foto_url = $5,
+        photo = $5,
         created_at = $6
        WHERE id = $7`,
-      [user.nome, user.matricula, user.senha, user.tipo, user.foto_url, user.created_at, user.id]
+      [user.name, user.matricula, user.senha, user.tipo, user.photo, user.created_at, user.id]
     );
 
     return user;

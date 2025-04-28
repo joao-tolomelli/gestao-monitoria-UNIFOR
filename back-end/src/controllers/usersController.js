@@ -1,3 +1,4 @@
+const { query } = require("../database");
 const User = require("../models/User");
 
 const usersController = {
@@ -13,8 +14,8 @@ const usersController = {
 
   async create(req, res) {
     try {
-      const { nome, matricula, senha, tipo, foto_url } = req.body;
-      const newUser = await User.create({ nome, matricula, senha, tipo, foto_url });
+      const { name, matricula, senha, tipo, photo } = req.body;
+      const newUser = await User.create({ name, matricula, senha, tipo, photo });
       res.status(201).json(newUser);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);

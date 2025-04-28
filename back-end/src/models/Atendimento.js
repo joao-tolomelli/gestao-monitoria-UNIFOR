@@ -3,19 +3,31 @@ const { query } = require("../database");
 class Atendimento {
   constructor(row) {
     this.id = row.id;
-    this.monitor_id = row.monitor_id;
-    this.data = row.data;
-    this.horas_trabalhadas = row.horas_trabalhadas;
+    this.id_monitor = row.id_monitor;
+    this.date = row.date;
+    this.minutes_worked = row.minutes_worked;
+    this.category = row.category;
+    this.served = row.served;
   }
 
-  static async create({ monitor_id, data, horas_trabalhadas }) {
+  static async create({ id_monitor, date, minutes_worked, category, served }) {
     const result = await query(
-      `INSERT INTO atendimentos (monitor_id, data, horas_trabalhadas)
-       VALUES ($1, $2, $3)
+      `INSERT INTO atendimentos (id_monitor, date, minutes_worked, category, served)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [monitor_id, data, horas_trabalhadas]
+      [id_monitor, date, minutes_worked, category, served]
     );
     return new Atendimento(result.rows[0]);
+  }
+
+  static async findAll() {
+    const result = await query(`SELECT * FROM atendimentos`);
+    return result.rows.map(row => new Atendimento(row));
+  }
+
+  static async findByMonitor(id_monitor) {
+    const result = await query(`SELECT * FROM atendimentos WHERE id_monitor = $1`, [id_monitor]);
+    return result.rows.map(row => new Atendimento(row));
   }
 }
 
