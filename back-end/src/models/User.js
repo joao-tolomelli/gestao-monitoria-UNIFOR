@@ -3,75 +3,66 @@ const { query } = require("../database");
 class User {
   constructor(userRow) {
     this.id = userRow.id;
-    this.name = userRow.name;
-    this.cpf = userRow.cpf;
-    this.email = userRow.email;
-    this.status = userRow.status;
-    this.guestGroup = userRow.guest_group;
-    this.createdAt = new Date(userRow.created_at);
-    this.updatedAt = new Date(userRow.updated_at);
+    this.nome = userRow.nome;
+    this.matricula = userRow.matricula;
+    this.senha = userRow.senha;
+    this.tipo = userRow.tipo;
+    this.foto_url = userRow.foto_url; // ✅ adicionamos o campo
+    this.created_at = userRow.created_at;
   }
 
   static async findAll() {
-    const result = await query(`SELECT * FROM Users;`);
+    const result = await query(`SELECT * FROM usuarios`);
     return result.rows.map((row) => new User(row));
   }
 
-  static async create({ name, cpf, email, guestGroup }) {
+  static async create({ nome, matricula, senha, tipo, foto_url }) {
     const result = await query(
-      `INSERT INTO Users (name, cpf, email, guest_group)
-           VALUES ($1, $2, $3, $4)
-           RETURNING *`,
-      [name, cpf, email, guestGroup]
+      `INSERT INTO usuarios (nome, matricula, senha, tipo, foto_url)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [nome, matricula, senha, tipo, foto_url]
     );
     return new User(result.rows[0]);
   }
 
   static async findById(id) {
-    const result = await query(`SELECT * FROM Users WHERE id = $1`, [id]);
-
+    const result = await query(`SELECT * FROM usuarios WHERE id = $1`, [id]);
     if (!result.rows[0]) return null;
-
     return new User(result.rows[0]);
   }
 
-  static async findByCPF(cpf) {
-    const result = await query(`SELECT * FROM Users WHERE cpf = $1`, [cpf]);
-
+  static async findByMatricula(matricula) {
+    const result = await query(`SELECT * FROM usuarios WHERE matricula = $1`, [matricula]);
     if (!result.rows[0]) return null;
-
     return new User(result.rows[0]);
   }
-
-
 
   static async update(id, attributes) {
-    const { rows } = await query(`SELECT * FROM Users WHERE id = $1`, [id]);
+    const { rows } = await query(`SELECT * FROM usuarios WHERE id = $1`, [id]);
     if (!rows[0]) return null;
 
     const user = new User(rows[0]);
-
-    // Substitui os atributos de user pelos passados em attributes
     Object.assign(user, attributes);
 
     await query(
-      `UPDATE Users SET
-                name = $1,
-                cpf = $2,
-                email = $3,
-                status = $4,
-                guest_group = $5,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = $6`,
-      [user.name, user.cpf, user.email, user.status, user.guestGroup, user.id]
+      `UPDATE usuarios SET
+        nome = $1,
+        matricula = $2,
+        senha = $3,
+        tipo = $4,
+        foto_url = $5,
+        created_at = $6
+       WHERE id = $7`,
+      [user.nome, user.matricula, user.senha, user.tipo, user.foto_url, user.created_at, user.id]
     );
 
     return user;
   }
 
   static async delete(id) {
-    await query(`DELETE FROM Users WHERE id = $1`, [id]);
-    return { message: "User deleted successfully." };
+    await query(`DELETE FROM usuarios WHERE id = $1`, [id]);
+    return { message: "Usuário deletado com sucesso." };
   }
 }
 
