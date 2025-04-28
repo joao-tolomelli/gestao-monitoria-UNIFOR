@@ -1,24 +1,52 @@
 import { useState } from "react";
-import Button from "../../components/Button";
 import Header from "../../components/Header";
 import InputBox from "../../components/InputBox";
-import Graph from "../../components/Graph";
+import ServiceCard from "../../components/ServiceCard";
+import Button from "../../components/Button";
 
-function HomeHandler() {
-  const [data, setData] = useState({
-    name: "João Vítor",
-    subject: "Física e suas Aplicações",
-    workingHours: {
-      Monday: "2",
-      Tuesday: "4",
-      Wednesday: "1",
-      Thursday: "0",
-      Friday: "6",
+function Services() {
+  const [services, setServices] = useState([
+    {
+      id: 1,
+      id_monitor: 12,
+      date: "2025-04-28",
+      category: "Tira dúvidas",
+      inTime: "19:15",
+      outTime: "21:15",
+      served: ["2217309", "2217308"],
     },
-    today: "Monday",
-  });
+    {
+      id: 2,
+      id_monitor: 12,
+      date: "2025-04-28",
+      category: "Tira dúvidas",
+      inTime: "19:15",
+      outTime: "21:15",
+      served: ["2217309", "2217308"],
+    },
+    {
+      id: 3,
+      id_monitor: 12,
+      date: "2025-04-28",
+      category: "Tira dúvidas",
+      inTime: "19:15",
+      outTime: "21:15",
+      served: ["2217309", "2217308"],
+    },
+    {
+      id: 4,
+      id_monitor: 12,
+      date: "2025-04-28",
+      category: "Tira dúvidas",
+      inTime: "19:15",
+      outTime: "21:15",
+      served: ["2217309", "2217308"],
+    },
+  ]);
 
   const [form, setForm] = useState({
+    id: "",
+    id_monitor: "",
     date: "",
     category: "",
     inTime: "",
@@ -43,35 +71,32 @@ function HomeHandler() {
     }));
   }
 
+  function setUpdateService(id) {
+    const currentForm = services.find((service) => service.id === id);
+    setForm(currentForm);
+  }
+
   return (
     <>
       <Header />
       <main className="px-[4rem] flex flex-col my-8">
-        <h1 className="text-2xl font-bold mb-4">Bem vindo, Monitor</h1>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-1 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <div className="flex flex-col justify-end h-full">
-              <h1 className="text-xl font-bold">{data.name}</h1>
-              <span>{data.subject}</span>
-            </div>
-          </div>
-          <div className="col-span-2 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <div className="flex flex-col h-full">
-              <h1 className="text-xl font-bold">Atendimentos</h1>
-              <div className="grid grid-cols-8 h-full">
-                <Graph
-                  workingHours={data.workingHours}
-                  today={data.today}
-                ></Graph>
-                <div className="col-span-3 flex justify-center items-center">
-                  <span>Tempo</span>
+        <h1 className="text-2xl font-bold mb-4">Atendimentos</h1>
+        <section className="grid grid-cols-12 gap-4">
+          <div className="col-span-6 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
+            <div className="flex flex-col h-full overflow-y-scroll gap-3">
+              {services.map((service, index) => (
+                <div key={index} className="pr-6">
+                  <ServiceCard
+                    service={service}
+                    setUpdateService={setUpdateService}
+                  />
                 </div>
-              </div>
+              ))}
             </div>
           </div>
-          <div className="col-span-2 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
+          <div className="col-span-6 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
             <div className="flex flex-col h-full w-full">
-              <h1 className="text-xl font-bold mb-4">Registrar atendimento</h1>
+              <h1 className="text-xl font-bold mb-4">Atualizar atendimento</h1>
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-4">
                   <InputBox
@@ -124,7 +149,13 @@ function HomeHandler() {
                     <div className="flex   h-full ml-2 mb-[.4rem]">
                       <button
                         className="flex justify-center items-center bg-blue-800 h-[1.5rem] w-[1.5rem] rounded-2xl transition duration-300 transform hover:bg-blue-700 hover:scale-105 cursor-pointer"
-                        onClick={(e) => {
+                        onClick={() => {
+                          const isNum = /^[0-9]+$/.test(newServed);
+                          console.log(!isNum);
+                          if (newServed.length < 7 || !isNum) {
+                            alert("Matrícula incorreta!");
+                            return;
+                          }
                           setForm((prev) => ({
                             ...prev,
                             served: [...prev.served, newServed],
@@ -157,8 +188,15 @@ function HomeHandler() {
               <div className="h-full w-full flex justify-center items-end">
                 <div
                   onClick={() => {
-                    console.log(form);
+                    const updatedFormIndex = services.findIndex(
+                      (service) => service.id === form.id
+                    );
+
+                    services[updatedFormIndex] = form;
+
                     setForm({
+                      id: "",
+                      id_monitor: "",
                       date: "",
                       category: "",
                       inTime: "",
@@ -167,22 +205,15 @@ function HomeHandler() {
                     });
                   }}
                 >
-                  <Button text="Registrar"></Button>
+                  <Button text="Atualizar"></Button>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-span-1 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <h1 className="text-xl font-bold">Configurações</h1>
-            <div className="h-full w-full px-6 flex flex-col justify-center items-center gap-12">
-              <Button text="Editar atendimento"></Button>
-              <Button text="Editar horários"></Button>
-            </div>
-          </div>
-        </div>
+        </section>
       </main>
     </>
   );
 }
 
-export default HomeHandler;
+export default Services;

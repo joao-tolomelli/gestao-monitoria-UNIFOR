@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomeHandler from "./views/HomeHandler";
 import Login from "./views/Login";
+import Home from "./views/Home";
+import Services from "./views/Services";
+import Schedules from "./views/Schedules";
 
 
 const router = createBrowserRouter([
@@ -10,7 +12,20 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    element: <HomeHandler />,
+    children:[
+      {
+        path:"/home",
+        element:<Home/>
+      },
+      {
+        path:"/home/atendimentos",
+        element:<Services/>
+      },
+      {
+        path:"/home/horarios",
+        element:<Schedules/>
+      }
+    ]
   },
 ]);
 
