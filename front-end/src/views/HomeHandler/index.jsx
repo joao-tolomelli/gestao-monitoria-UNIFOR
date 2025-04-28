@@ -18,6 +18,31 @@ function HomeHandler() {
     today: "Monday",
   });
 
+  const [form, setForm] = useState({
+    date: "",
+    category: "",
+    inTime: "",
+    outTime: "",
+    served: [],
+  });
+
+  const [newServed, setNewServed] = useState("");
+
+  // Função para permitir que um componente edite um valor interno do form
+  const changeInfo = (key) => (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: e.target.value,
+    }));
+  };
+
+  function removeServed(indexToRemove) {
+    setForm((prevForm) => ({
+      ...prevForm,
+      served: prevForm.served.filter((_, index) => index !== indexToRemove),
+    }));
+  }
+
   return (
     <>
       <Header />
@@ -49,27 +74,99 @@ function HomeHandler() {
               <h1 className="text-xl font-bold mb-4">Registrar atendimento</h1>
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-4">
-                  <InputBox label="Data" type="date"></InputBox>
+                  <InputBox
+                    label="Data"
+                    type="date"
+                    value={form.date}
+                    onChange={changeInfo("date")}
+                  ></InputBox>
                 </div>
                 <div className="col-span-8">
-                  <InputBox label="Categoria" type="text"></InputBox>
+                  <InputBox
+                    label="Categoria"
+                    type="text"
+                    value={form.category}
+                    onChange={changeInfo("category")}
+                  ></InputBox>
                 </div>
-                <div className="col-span-5">
-                  <div className="flex flex-row items-end">
+                <div className="col-span-3">
+                  <div className=" items-end">
                     <InputBox
-                      label="Alunos atendidos (matricula)"
-                      type="text"
-                    ></InputBox>
-                    <div className="flex  w-full h-full ml-2 mb-[.4rem]">
-                      <button className="flex justify-center items-center bg-blue-800 h-[1.5rem] w-[1.5rem] rounded-2xl transition duration-300 transform hover:bg-blue-700 hover:scale-105 cursor-pointer">
+                      label="Entrada"
+                      type="time"
+                      value={form.inTime}
+                      onChange={changeInfo("inTime")}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-3">
+                  <div className="items-end">
+                    <InputBox
+                      label="Saída"
+                      type="time"
+                      value={form.outTime}
+                      onChange={changeInfo("outTime")}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-6">
+                  <div className="flex flex-row items-end">
+                    <div className="w-full">
+                      <InputBox
+                        label="Alunos atendidos (matricula)"
+                        type="text"
+                        value={newServed}
+                        onChange={(e) => {
+                          setNewServed(e.target.value);
+                        }}
+                      ></InputBox>
+                    </div>
+                    <div className="flex   h-full ml-2 mb-[.4rem]">
+                      <button
+                        className="flex justify-center items-center bg-blue-800 h-[1.5rem] w-[1.5rem] rounded-2xl transition duration-300 transform hover:bg-blue-700 hover:scale-105 cursor-pointer"
+                        onClick={(e) => {
+                          setForm((prev) => ({
+                            ...prev,
+                            served: [...prev.served, newServed],
+                          }));
+                          setNewServed("");
+                        }}
+                      >
                         <i className="pi pi-plus text-white text-sm" />
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="flex flex-wrap gap-2 my-4">
+                {form.served.map((student, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center bg-blue-800 text-white text-sm rounded-xl px-3 py-1"
+                  >
+                    <span className="mr-2">{student}</span>
+                    <button
+                      onClick={() => removeServed(index)}
+                      className="text-white hover:text-red-600 transition"
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+              </div>
               <div className="h-full w-full flex justify-center items-end">
-                <div>
+                <div
+                  onClick={() => {
+                    console.log(form);
+                    setForm({
+                      date: "",
+                      category: "",
+                      inTime: "",
+                      outTime: "",
+                      served: [],
+                    });
+                  }}
+                >
                   <Button text="Registrar"></Button>
                 </div>
               </div>
