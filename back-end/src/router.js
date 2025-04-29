@@ -3,6 +3,7 @@ const usersController = require("./controllers/usersController");
 const monitorsController = require("./controllers/monitorsController");
 const disciplinasController = require("./controllers/disciplinasController");
 const atendimentosController = require("./controllers/atendimentosController");
+const authController = require("./controllers/authController");
 
 const router = Router();
 
@@ -35,5 +36,7 @@ router.post("/disciplinas", disciplinasController.create);
 router.get("/disciplinas/:id", disciplinasController.show);
 router.put("/disciplinas/:id", disciplinasController.update);
 router.delete("/disciplinas/:id", disciplinasController.delete);
+
+router.post("/login", authController.login);
 
 module.exports = router;

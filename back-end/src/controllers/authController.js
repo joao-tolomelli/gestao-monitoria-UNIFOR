@@ -1,4 +1,4 @@
-const { query } = require("../database");
+const db = require("../database");
 
 const authController = {
   async login(req, res) {
@@ -9,16 +9,24 @@ const authController = {
         return res.status(400).json({ error: "Matrícula e senha são obrigatórias." });
       }
 
-      const result = await query(
-        `SELECT id, name, matricula, photo, tipo FROM usuarios WHERE matricula = $1 AND senha = $2`,
+      const result = await db.query(
+        `SELECT * FROM usuarios WHERE matricula = $1 AND senha = $2`,
         [matricula, senha]
       );
 
-      if (result.rows.length === 0) {
-        return res.status(401).json({ error: "Matrícula ou senha inválida." });
+      const user = result.rows[0];
+
+      if (!user) {
+        return res.status(401).json({ error: "Matrícula ou senha incorretos." });
       }
 
-      res.status(200).json(result.rows[0]);
+      res.status(200).json({
+        id: user.id,
+        name: user.name,
+        matricula: user.matricula,
+        tipo: user.tipo,
+        photo: user.photo
+      });
     } catch (error) {
       console.error("Erro no login:", error);
       res.status(500).json({ error: "Erro interno no login." });
