@@ -1,21 +1,40 @@
 import Button from "../../components/Button";
 import InputBox from "../../components/InputBox";
-
 import logoUnifor from "../../assets/logo-unifor.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import authService from "../../Services/auth.service";
 
 function Login() {
   const [credentials, setCredentials] = useState({
     matricula: "",
     senha: "",
   });
-  // Função para permitir que um componente edite um valor interno do form
+
+  const [errorMessage, setErrorMessage] = useState(""); // estado para mensagem de erro
+  const navigate = useNavigate();
+
   const changeInfo = (key) => (e) => {
     setCredentials((prev) => ({
       ...prev,
       [key]: e.target.value,
     }));
   };
+
+  const handleLogin = async () => {
+    try {
+      const response = await authService.login(credentials);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      navigate("/home");
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage("Erro ao tentar fazer login.");
+      }
+    }
+  };
+
   return (
     <main className="grid grid-cols-2 h-screen w-screen">
       <section className="col-span-1 h-full bg-white">
@@ -34,9 +53,19 @@ function Login() {
             <InputBox label={"Senha"} type="password" onChange={changeInfo("senha")} />
           </div>
 
-          <div onClick={()=>{console.log(credentials)}}>
-            <Button text="Entrar" />
+          <div className="flex flex-col gap-2">
+            <div onClick={handleLogin}>
+              <Button text="Entrar" />
+            </div>
+
+            {/* Exibir erro se existir */}
+            {errorMessage && (
+              <div className="bg-red-100 text-red-700 border border-red-400 p-3 rounded-md text-center">
+                {errorMessage}
+              </div>
+            )}
           </div>
+
         </div>
       </section>
       <section className="col-span-1 h-full bg-blue-800">
