@@ -5,6 +5,7 @@ const disciplinasController = require("./controllers/disciplinasController");
 const atendimentosController = require("./controllers/atendimentosController");
 const authController = require("./controllers/authController");
 
+
 const router = Router();
 
 // Rotas para usuários
@@ -37,6 +38,9 @@ router.get("/disciplinas/:id", disciplinasController.show);
 router.put("/disciplinas/:id", disciplinasController.update);
 router.delete("/disciplinas/:id", disciplinasController.delete);
 
-router.post("/login", authController.login);
+
+// Rotas de Autenticação
+router.post("/login", authController.login)
+
 
 module.exports = router;
