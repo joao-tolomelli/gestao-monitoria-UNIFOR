@@ -1,58 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import InputBox from "../../components/InputBox";
 import ServiceCard from "../../components/ServiceCard";
 import Button from "../../components/Button";
+import axios from "axios";
 
 function Services() {
-  const [services, setServices] = useState([
-    {
-      id: 1,
-      id_monitor: 12,
-      date: "2025-04-28",
-      category: "Tira dúvidas",
-      inTime: "19:15",
-      outTime: "21:15",
-      served: ["2217309", "2217308"],
-    },
-    {
-      id: 2,
-      id_monitor: 12,
-      date: "2025-04-28",
-      category: "Tira dúvidas",
-      inTime: "19:15",
-      outTime: "21:15",
-      served: ["2217309", "2217308"],
-    },
-    {
-      id: 3,
-      id_monitor: 12,
-      date: "2025-04-28",
-      category: "Tira dúvidas",
-      inTime: "19:15",
-      outTime: "21:15",
-      served: ["2217309", "2217308"],
-    },
-    {
-      id: 4,
-      id_monitor: 12,
-      date: "2025-04-28",
-      category: "Tira dúvidas",
-      inTime: "19:15",
-      outTime: "21:15",
-      served: ["2217309", "2217308"],
-    },
-  ]);
+  const [services, setServices] = useState(null);
 
   const [form, setForm] = useState({
     id: "",
     id_monitor: "",
     date: "",
     category: "",
-    inTime: "",
-    outTime: "",
+    in_time: "",
+    out_time: "",
     served: [],
   });
+
+  useEffect(() => {
+    fetchServicesData();
+  }, []);
+
+  const fetchServicesData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
+
+      if (!userId) {
+        console.error("Usuário não encontrado no localStorage");
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:3000/api/atendimentos/monitor/${userId}`
+      );
+
+      setServices(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados da home:", error);
+    }
+  };
 
   const [newServed, setNewServed] = useState("");
 
@@ -74,6 +62,17 @@ function Services() {
   function setUpdateService(id) {
     const currentForm = services.find((service) => service.id === id);
     setForm(currentForm);
+  }
+
+  if (!services) {
+    return (
+      <>
+        <Header />
+        <div className="h-screen w-screen flex items-center justify-center">
+          <p className="text-xl font-semibold">Carregando informações...</p>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -119,8 +118,8 @@ function Services() {
                     <InputBox
                       label="Entrada"
                       type="time"
-                      value={form.inTime}
-                      onChange={changeInfo("inTime")}
+                      value={form.in_time}
+                      onChange={changeInfo("in_time")}
                     />
                   </div>
                 </div>
@@ -129,8 +128,8 @@ function Services() {
                     <InputBox
                       label="Saída"
                       type="time"
-                      value={form.outTime}
-                      onChange={changeInfo("outTime")}
+                      value={form.out_time}
+                      onChange={changeInfo("out_time")}
                     />
                   </div>
                 </div>
@@ -199,8 +198,8 @@ function Services() {
                       id_monitor: "",
                       date: "",
                       category: "",
-                      inTime: "",
-                      outTime: "",
+                      in_time: "",
+                      out_time: "",
                       served: [],
                     });
                   }}

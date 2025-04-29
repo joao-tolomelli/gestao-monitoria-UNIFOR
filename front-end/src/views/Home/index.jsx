@@ -1,37 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import InputBox from "../../components/InputBox";
 import Graph from "../../components/Graph";
+import axios from "axios";
 
 function Home() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [data, setData] = useState({
-    name: "João Vítor",
-    subject: "Física e suas Aplicações",
-    photo: "",
-    workingHours: {
-      Monday: "2",
-      Tuesday: "4",
-      Wednesday: "1",
-      Thursday: "0",
-      Friday: "6",
-    },
-    today: "Monday",
-  });
+  const [data, setData] = useState(null); // Começa como null, e atualizamos com a resposta
 
   const [form, setForm] = useState({
+    id_monitor: "",
     date: "",
     category: "",
-    inTime: "",
-    outTime: "",
+    in_time: "",
+    out_time: "",
     served: [],
   });
 
   const [newServed, setNewServed] = useState("");
+
+  useEffect(() => {
+    fetchHomeData();
+  }, []);
+
+  const fetchHomeData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
+
+      if (!userId) {
+        console.error("Usuário não encontrado no localStorage");
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:3000/api/monitores/${userId}/home`
+      );
+
+      setData(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados da home:", error);
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
+
+      const formToSend = {
+        ...form,
+        id_monitor: userId,
+      };
+
+      const response = await axios.post(
+        "http://localhost:3000/api/atendimentos",
+        formToSend
+      );
+
+      alert("Atendimento registrado com sucesso!");
+
+      setForm({
+        id_monitor: "",
+        date: "",
+        category: "",
+        in_time: "",
+        out_time: "",
+        served: [],
+      });
+
+      // Atualiza os dados da home
+      await fetchHomeData();
+    } catch (error) {
+      console.error("Erro ao registrar atendimento:", error);
+      alert(
+        "Erro ao registrar atendimento. Verifique os dados e tente novamente."
+      );
+    }
+  };
 
   // Função para permitir que um componente edite um valor interno do form
   const changeInfo = (key) => (e) => {
@@ -48,6 +98,17 @@ function Home() {
     }));
   }
 
+  if (!data) {
+    return (
+      <>
+        <Header />
+        <div className="h-screen w-screen flex items-center justify-center">
+          <p className="text-xl font-semibold">Carregando informações...</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
@@ -55,9 +116,18 @@ function Home() {
         <h1 className="text-2xl font-bold mb-4">Bem vindo, Monitor</h1>
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-1 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
-            <div className="flex flex-col justify-end h-full">
-              <h1 className="text-xl font-bold">{data.name}</h1>
-              <span>{data.subject}</span>
+            <div
+              className="flex flex-col justify-end h-full bg-cover bg-center rounded-2xl p-4"
+              style={{
+                backgroundImage: `url(${
+                  data.photo || "https://via.placeholder.com/300"
+                })`,
+              }}
+            >
+              <div className="bg-white bg-opacity-80 p-2 rounded-md">
+                <h1 className="text-xl font-bold">{data.name}</h1>
+                <span>{data.subject}</span>
+              </div>
             </div>
           </div>
           <div className="col-span-2 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
@@ -68,8 +138,9 @@ function Home() {
                   workingHours={data.workingHours}
                   today={data.today}
                 ></Graph>
-                <div className="col-span-3 flex justify-center items-center">
-                  <span>Tempo</span>
+                <div className="col-span-3 flex flex-col justify-center items-center">
+                  <h1 className="text-4xl font-bold">{data.total_trabalho}</h1>
+                  <span>Horas trabalhadas nessa semana</span>
                 </div>
               </div>
             </div>
@@ -99,8 +170,8 @@ function Home() {
                     <InputBox
                       label="Entrada"
                       type="time"
-                      value={form.inTime}
-                      onChange={changeInfo("inTime")}
+                      value={form.in_time}
+                      onChange={changeInfo("in_time")}
                     />
                   </div>
                 </div>
@@ -109,8 +180,8 @@ function Home() {
                     <InputBox
                       label="Saída"
                       type="time"
-                      value={form.outTime}
-                      onChange={changeInfo("outTime")}
+                      value={form.out_time}
+                      onChange={changeInfo("out_time")}
                     />
                   </div>
                 </div>
@@ -163,7 +234,7 @@ function Home() {
                 <div
                   onClick={() => {
                     const isNum = /^[0-9]+$/.test(newServed);
-                    console.log(!isNum)
+                    console.log(!isNum);
                     if (newServed.length < 7 || !isNum) {
                       alert("Matrícula incorreta!");
                       return;
@@ -174,8 +245,13 @@ function Home() {
                     }));
                     setNewServed("");
                   }}
+                ></div>
+                <div
+                  onClick={() => {
+                    handleRegister();
+                  }}
                 >
-                  <Button text="Registrar"></Button>
+                  <Button text="Registrar" />
                 </div>
               </div>
             </div>
@@ -183,10 +259,20 @@ function Home() {
           <div className="col-span-1 bg-white rounded-2xl p-7 xl:h-[20rem] 2xl:h-[30rem]">
             <h1 className="text-xl font-bold">Configurações</h1>
             <div className="h-full w-full px-6 flex flex-col justify-center items-center gap-12">
-              <div className="w-full" onClick={()=>{navigate("atendimentos")}}>
+              <div
+                className="w-full"
+                onClick={() => {
+                  navigate("atendimentos");
+                }}
+              >
                 <Button text="Editar atendimento"></Button>
               </div>
-              <div className="w-full" onClick={()=>{navigate("horarios")}}>
+              <div
+                className="w-full"
+                onClick={() => {
+                  navigate("horarios");
+                }}
+              >
                 <Button text="Editar horários"></Button>
               </div>
             </div>
