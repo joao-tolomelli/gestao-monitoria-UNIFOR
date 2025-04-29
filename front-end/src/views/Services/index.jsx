@@ -7,6 +7,7 @@ import axios from "axios";
 
 function Services() {
   const [services, setServices] = useState(null);
+  const [newServed, setNewServed] = useState("");
 
   const [form, setForm] = useState({
     id: "",
@@ -42,7 +43,39 @@ function Services() {
     }
   };
 
-  const [newServed, setNewServed] = useState("");
+  const updateService = async () => {
+    try {
+      const payload = {
+        date: form.date,
+        in_time: form.in_time,
+        out_time: form.out_time,
+        category: form.category,
+        served: form.served,
+      };
+  
+      await axios.put(`http://localhost:3000/api/atendimentos/${form.id}`, payload);
+  
+      // Atualiza a lista local após a atualização no banco
+      await fetchServicesData();
+  
+      // Limpa o formulário
+      setForm({
+        id: "",
+        id_monitor: "",
+        date: "",
+        category: "",
+        in_time: "",
+        out_time: "",
+        served: [],
+      });
+  
+      alert("Atendimento atualizado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar atendimento:", error);
+      alert("Erro ao atualizar atendimento.");
+    }
+  }
+
 
   // Função para permitir que um componente edite um valor interno do form
   const changeInfo = (key) => (e) => {
@@ -186,23 +219,7 @@ function Services() {
               </div>
               <div className="h-full w-full flex justify-center items-end">
                 <div
-                  onClick={() => {
-                    const updatedFormIndex = services.findIndex(
-                      (service) => service.id === form.id
-                    );
-
-                    services[updatedFormIndex] = form;
-
-                    setForm({
-                      id: "",
-                      id_monitor: "",
-                      date: "",
-                      category: "",
-                      in_time: "",
-                      out_time: "",
-                      served: [],
-                    });
-                  }}
+                  onClick={() => {updateService()}}
                 >
                   <Button text="Atualizar"></Button>
                 </div>
