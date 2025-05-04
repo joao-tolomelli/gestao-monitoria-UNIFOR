@@ -1,5 +1,6 @@
 function GraphCandle({ value ,selected=false}) {
-  const percentage = parseInt((value / 6) * 100);
+  const horas = value/60
+  const percentage = parseInt((horas / 4) * 100);
   return (
     <div className="grid grid-rows-12">
       <div className="row-span-10 flex items-end">

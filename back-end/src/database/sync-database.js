@@ -67,10 +67,13 @@ async function syncDatabase() {
         id SERIAL PRIMARY KEY,
         id_monitor INTEGER REFERENCES monitores(usuario_id),
         date DATE NOT NULL,
+        in_time TIME NOT NULL,
+        out_time TIME NOT NULL,
         minutes_worked INTEGER NOT NULL,
         category TEXT,
         served TEXT[]
       );
+
 
       CREATE TABLE atendimentos_alunos (
         atendimento_id INT REFERENCES atendimentos(id) ON DELETE CASCADE,
