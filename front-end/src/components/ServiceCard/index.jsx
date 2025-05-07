@@ -1,4 +1,4 @@
-function ServiceCard({ service, setUpdateService }) {
+function ServiceCard({ service, setUpdateService, showInfo }) {
   const formattedDate = new Date(service.date).toLocaleDateString("pt-BR");
   const formattedInTime = service.in_time?.slice(0, 5);
   const formattedOutTime = service.out_time?.slice(0, 5);
@@ -14,12 +14,17 @@ function ServiceCard({ service, setUpdateService }) {
         </div>
         <span>Alunos: {service.served.length}</span>
       </div>
-      <div onClick={() => setUpdateService(service.id)}>
-        <i className="pi pi-file-edit text-white text-base cursor-pointer"></i>
-      </div>
+      {setUpdateService ? (
+        <div onClick={() => setUpdateService(service.id)}>
+          <i className="pi pi-file-edit text-white text-base cursor-pointer"></i>
+        </div>
+      ) : (
+        <div onClick={() => showInfo(service.id)}>
+          <i className="pi pi-info-circle text-white text-base cursor-pointer"></i>
+        </div>
+      )}
     </div>
   );
 }
 
 export default ServiceCard;
-

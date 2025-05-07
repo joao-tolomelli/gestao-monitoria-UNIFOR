@@ -3,7 +3,7 @@ import Login from "./views/Login";
 import Home from "./views/Home";
 import Services from "./views/Services";
 import Schedules from "./views/Schedules";
-
+import AdminHome from "./views/AdminHome";
 
 const router = createBrowserRouter([
   {
@@ -12,20 +12,29 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    children:[
+    children: [
       {
-        path:"/home",
-        element:<Home/>
+        path: "/home",
+        element: <Home />,
       },
       {
-        path:"/home/atendimentos",
-        element:<Services/>
+        path: "/home/atendimentos",
+        element: <Services />,
       },
       {
-        path:"/home/horarios",
-        element:<Schedules/>
-      }
-    ]
+        path: "/home/horarios",
+        element: <Schedules />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    children: [
+      {
+        path: "/admin/home",
+        element: <AdminHome />,
+      },
+    ],
   },
 ]);
 
