@@ -5,12 +5,21 @@ const fs = require('fs');
 const path = require('path');
 
 const dbURL = process.env.DB_URL
-const sslPath = path.join(__dirname, '..', 'ssl', 'ca.crt');
+//const sslPath = path.join(__dirname, '..', 'ssl', 'ca.crt');
 
+/*
 const pool = new Pool({
   connectionString: dbURL,
   ssl: {
 		ca: fs.readFileSync(sslPath).toString(),
+	}
+});
+*/
+
+const pool = new Pool({
+  connectionString: dbURL,
+  ssl: {
+		require: true,
 	}
 });
 
